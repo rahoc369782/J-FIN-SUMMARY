@@ -103,3 +103,38 @@ Today's Expenses                             .00 Rs            0.00
 Yesterday's Expenses                    3,280.00 Rs
 --------------------------------------------------------------------
 Report generated successfully.
+
+-------------------------------------------------------------------   
+[1m          JERENS Finance Report - Thursday, January 23, 2025(B[m
+-------------------------------------------------------------------   
+                  Net Worth: .00 Rs ((0.00)% change)                  
+
+-------------------------------------------------------------------   
+[1m                           Account Balances(B[m                 
+-------------------------------------------------------------------   
+Account                                     Balance      Change (%)
+----------------------------------- --------------- ---------------
+Income                                       .00 Rs            0.00
+Total Laibilities                            .00 Rs            0.00
+Total Assets                                 .00 Rs            0.00
+Assets (Cash Bal)                            .00 Rs            0.00
+Assets (Total Bank Bal)                      .00 Rs            0.00
+Assets (Investments Bank Bal)                .00 Rs            0.00
+Assets (Investments)                         .00 Rs            0.00
+
+-------------------------------------------------------------------   
+[1m                          Investment Details(B[m                
+-------------------------------------------------------------------   
+Investment Account                          Balance      Change (%)
+----------------------------------- --------------- ---------------
+Mutual Funds                                 .00 Rs                
+Stocks                                       .00 Rs                
+
+-------------------------------------------------------------------   
+[1m                           Expense's Report(B[m                 
+-------------------------------------------------------------------   
+Months Personal Expense                      .00 Rs            0.00
+Today's Expenses                             .00 Rs            0.00
+Yesterday's Expenses                         .00 Rs
+--------------------------------------------------------------------
+Report generated successfully.
