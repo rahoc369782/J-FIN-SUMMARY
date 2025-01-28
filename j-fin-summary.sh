@@ -3,7 +3,13 @@
 # Define the file paths
 LEDGER_COREFILE=${LEDGER_COREFILE:-ledger.dat}
 LEDGER_PRICEDB=${LEDGER_PRICEDB:-pricedb.dat}
-REPORT_FILE="finance_report.txt"  # Output file for the report
+
+# Get the current timestamp in the format YYYY-MM-DD-HH-MM-SS
+current_timestamp=$(date +'%Y-%m-%d-%H-%M-%S')
+
+# Define the folder and report file path
+REPORT_FOLDER="./finance_reports"
+REPORT_FILE="$REPORT_FOLDER/finance-report-$current_timestamp.txt"
 
 # Check if ledger files exist
 if [[ ! -f "$LEDGER_COREFILE" ]]; then
@@ -117,16 +123,19 @@ declare -A TRACKED_ACCOUNTS=(
   ["Assets (Investments)"]="assets:investments"
   ["Assets (Total Bank Bal)"]="assets:bank"
   ["Assets (Investments Bank Bal)"]="assets:bank:ivaxis"
+  ["Assets (Saving Bank Bal)"]="assets:bank:svsbi"
   ["Assets (Cash Bal)"]="assets:cash"
   ["Total Laibilities"]="liabilities"
   ["Income"]="income"
+  ["Total Gains"]="gains"
+  ["Known Bal"]="known:bal:household"
 )
 
 for account in "${!TRACKED_ACCOUNTS[@]}"; do
   current=$(ledger -f "$LEDGER_COREFILE" --price-db "$LEDGER_PRICEDB" -V bal "${TRACKED_ACCOUNTS[$account]}" | awk 'END{print $1}')
   previous=$(ledger -f "$LEDGER_COREFILE" --price-db "$LEDGER_PRICEDB" -V bal "${TRACKED_ACCOUNTS[$account]}" --period "yesterday" | awk 'END{print $1}')
   change=$(calculate_percentage_change "$current" "$previous")
-  printf "%-35s %15s %15s\n" "$account" "$(format_number "$current")" "$change" >> "$REPORT_FILE"
+  printf "%-35s %15s %15s\n" "-> $account" "$(format_number "$current")" "$change" >> "$REPORT_FILE"
 done
 
 # Investment Details Section
@@ -137,6 +146,7 @@ printf "%-35s %15s %15s\n" "-----------------------------------" "--------------
 declare -A INVESTMENT_ACCOUNTS=(
   ["Mutual Funds"]="assets:investments:mutual_funds"
   ["Stocks"]="assets:investments:stocks"
+  ["Total Gains MF"]="gains:source:investments:mf"
 )
 
 # calculation with original buying price
@@ -145,7 +155,7 @@ for investment in "${!INVESTMENT_ACCOUNTS[@]}"; do
   current=$(ledger -f "$LEDGER_COREFILE" --price-db "$LEDGER_PRICEDB" -V bal "${INVESTMENT_ACCOUNTS[$investment]}" | awk 'END{print $NF}')
   previous=$(ledger -f "$LEDGER_COREFILE" --price-db "$LEDGER_PRICEDB" -V bal "${INVESTMENT_ACCOUNTS[$investment]}" --period "yesterday" | awk 'END{print $NF}')
   change=$(calculate_percentage_change "$current" "$previous")
-  printf "%-35s %15s %15s\n" "$investment" "$(format_number "$current")" "$org_current" >> "$REPORT_FILE"
+  printf "%-35s %15s %15s\n" "-> $investment" "$(format_number "$current")" "$org_current" >> "$REPORT_FILE"
 done
 
 # Today's Report Section
@@ -156,9 +166,9 @@ lm_personal_expense=$(ledger -f "$LEDGER_COREFILE" --price-db "$LEDGER_PRICEDB" 
 yesterday_expense=$(ledger -f "$LEDGER_COREFILE" --price-db "$LEDGER_PRICEDB" -V bal expense --period "yesterday" | awk 'END{print $1}')
 expense_change=$(calculate_percentage_change "$today_expense" "$yesterday_expense")
 m_expense_change=$(calculate_percentage_change "$m_personal_expense" "$lm_personal_expense")
-printf "%-35s %15s %15s\n" "Months Personal Expense" "$(format_number "$m_personal_expense")" "$m_expense_change" >> "$REPORT_FILE"
-printf "%-35s %15s %15s\n" "Today's Expenses" "$(format_number "$today_expense")" "$expense_change" >> "$REPORT_FILE"
-printf "%-35s %15s\n" "Yesterday's Expenses" "$(format_number "$yesterday_expense")" >> "$REPORT_FILE"
+printf "%-35s %15s %15s\n" "-> Months Personal Expense" "$(format_number "$m_personal_expense")" "$m_expense_change" >> "$REPORT_FILE"
+printf "%-35s %15s %15s\n" "-> Today's Expenses" "$(format_number "$today_expense")" "$expense_change" >> "$REPORT_FILE"
+printf "%-35s %15s\n" "-> Yesterday's Expenses" "$(format_number "$yesterday_expense")" >> "$REPORT_FILE"
 
 echo ""
 echo "--------------------------------------------------------------------" >> "$REPORT_FILE"
